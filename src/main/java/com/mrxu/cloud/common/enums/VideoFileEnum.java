@@ -29,7 +29,8 @@ public enum VideoFileEnum {
     dat("dat"),
     mkv("mkv"),
     flv("flv"),
-    vob("vob")
+    vob("vob"),
+    m3u8("m3u8")
     ;
 
     private String itemLabel;
