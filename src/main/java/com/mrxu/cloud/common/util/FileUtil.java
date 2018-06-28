@@ -764,6 +764,62 @@ public class FileUtil {
 	}
 
 	/**
+	 * 从网络Url中下载文件
+	 *
+	 * @param urlStr
+	 * @param saveFileFullPath
+	 * @throws IOException
+	 */
+	public static void downLoadFromUrl(String urlStr, String saveFileFullPath) throws MrxuException {
+		URL url;
+		FileOutputStream fos = null;
+		InputStream inputStream = null;
+		try {
+			url = new URL(urlStr);
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			// 设置超时间为3秒
+			conn.setConnectTimeout(3 * 1000);
+			// 防止屏蔽程序抓取而返回403错误
+			conn.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)");
+
+			// 得到输入流
+			inputStream = conn.getInputStream();
+			// 获取自己数组
+			byte[] getData = FileUtil.readInputStream(inputStream);
+
+			// 文件保存位置
+			/*File dir = new File(saveDir);
+			if (!dir.exists()) {
+				dir.mkdir();
+			}*/
+
+			File file = new File(saveFileFullPath);
+			fos = new FileOutputStream(file);
+			fos.write(getData);
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.out.println("info:" + urlStr + " download fail");
+			throw new MrxuException(MrxuExceptionEnums.RC_COMMON_ERROR);
+		} finally {
+			if (fos != null) {
+				try {
+					fos.close();
+				} catch (IOException e) {
+					throw new MrxuException(MrxuExceptionEnums.RC_COMMON_ERROR);
+				}
+			}
+			if (inputStream != null) {
+				try {
+					inputStream.close();
+				} catch (IOException e) {
+					throw new MrxuException(MrxuExceptionEnums.RC_COMMON_ERROR);
+				}
+			}
+		}
+		System.out.println("info:" + url + " download success");
+	}
+
+	/**
 	 * 从输入流中获取字节数组
 	 * 
 	 * @param inputStream
